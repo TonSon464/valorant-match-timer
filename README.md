@@ -4,6 +4,8 @@ A small Windows timer for Valorant that watches the local game log, tracks match
 
 The main window behaves like a normal window and never pins above other apps. The overlay is separate and only appears over fullscreen games.
 
+__(Works on other games too!)__
+
 ## Features
 
 - **Get-off countdown** - set a clock time, add 30 minutes or an hour, or clear it.
