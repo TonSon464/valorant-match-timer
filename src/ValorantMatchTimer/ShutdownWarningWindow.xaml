@@ -37,7 +37,8 @@
                        Foreground="{StaticResource TextBrush}"
                        TextWrapping="Wrap"
                        Margin="0,7,0,10" />
-            <TextBlock Grid.Row="2"
+            <TextBlock x:Name="CountdownLabel"
+                       Grid.Row="2"
                        Text="PC SHUTS DOWN IN"
                        Style="{StaticResource LabelText}" />
             <TextBlock x:Name="CountdownText"
@@ -53,13 +54,15 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0"
+                <Button x:Name="CancelButton"
+                        Grid.Column="0"
                         Content="Cancel shutdown"
                         Style="{StaticResource AccentButton}"
                         FontSize="13"
                         Padding="14,10"
                         Click="Cancel_Click" />
-                <Button Grid.Column="1"
+                <Button x:Name="ShutdownButton"
+                        Grid.Column="1"
                         Content="Shut down now"
                         Style="{StaticResource BaseButton}"
                         FontSize="11"

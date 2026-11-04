@@ -19,7 +19,8 @@ public partial class ShutdownWarningWindow : Window
         string detail,
         int seconds,
         Action onCancel,
-        Action onShutdown)
+        Action onShutdown,
+        bool test = false)
     {
         InitializeComponent();
         WindowTheme.EnableDarkTitleBar(this);
@@ -30,6 +31,13 @@ public partial class ShutdownWarningWindow : Window
 
         TitleText.Text = title.ToUpperInvariant();
         DetailText.Text = detail;
+
+        if (test)
+        {
+            CountdownLabel.Text = "TEST COUNTDOWN";
+            CancelButton.Content = "Close";
+            ShutdownButton.Visibility = Visibility.Collapsed;
+        }
 
         _timer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         _timer.Tick += (_, _) => Tick();

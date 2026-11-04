@@ -647,7 +647,7 @@ public partial class MainWindow : Window
         StatusDot.Fill = brush;
     }
 
-    private void BeginShutdownWarning(string title, string detail, int seconds)
+    private void BeginShutdownWarning(string title, string detail, int seconds, bool test = false)
     {
         if (_warning is not null)
         {
@@ -660,10 +660,16 @@ public partial class MainWindow : Window
             seconds,
             onCancel: () =>
             {
-                Log("Shutdown cancelled. You can keep playing.");
-                Beep();
+                Log(test ? "Test warning closed." : "Shutdown cancelled. You can keep playing.");
+                if (!test)
+                {
+                    Beep();
+                }
             },
-            onShutdown: ExecuteShutdown);
+            onShutdown: test
+                ? () => Log("Test warning finished. No shutdown performed.")
+                : ExecuteShutdown,
+            test: test);
 
         _warning = warning;
         warning.Closed += (_, _) =>
@@ -768,8 +774,9 @@ public partial class MainWindow : Window
     {
         BeginShutdownWarning(
             "Test warning",
-            "This is a test. Nothing happens if you cancel.",
-            10);
+            "This is a test. Nothing will shut down.",
+            10,
+            test: true);
     }
 
     public void CancelPendingShutdown()
