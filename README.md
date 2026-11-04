@@ -68,6 +68,11 @@ The result is `dist\ValorantMatchTimer.exe`.
 
 The original Python version is kept in [`legacy/`](legacy/) for reference and is no longer the primary application.
 
+## NOTE
+
+This app isn't signed yet, but the app is safe. (check from virustotal.com)
+https://www.virustotal.com/gui/file/d3708d564082a48dcf4a48ec64cefe0c5ba5c512f3cb3a1a420556be20154c75?nocache=1
+
 ## License
 
 MIT - see [LICENSE](LICENSE).
