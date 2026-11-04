@@ -49,7 +49,7 @@ If the log is not detected automatically, set the path in **Settings > General**
 
 > [!NOTE]
 > **Feedback & Support**
-> If you have any issues, ideas, or recommendations, please open an issue in the **[Issues](../../issues)** section of this repository
+> If you have any issues, ideas, or recommendations, please open an issue in the **[Issues](../../issues?state=all)** section of this repository
 > Discord server is coming soon.
 
 ## Settings and data
