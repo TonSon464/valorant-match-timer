@@ -32,6 +32,8 @@ Download the latest `ValorantMatchTimer.exe` from the [Releases](../../releases)
 
 The executable is self-contained and does not require a separate .NET installation.
 
+## 
+
 ## Usage
 
 1. Start `ValorantMatchTimer.exe`.
@@ -44,6 +46,11 @@ If the log is not detected automatically, set the path in **Settings > General**
 ```
 %LOCALAPPDATA%\VALORANT\Saved\Logs\ShooterGame.log
 ```
+
+> [!NOTE]
+> **Feedback & Support**
+> If you have any issues, ideas, or recommendations, please open an issue in the **[Issues](../../issues)** section of this repository
+> Discord server is coming soon.
 
 ## Settings and data
 
