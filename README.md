@@ -6,6 +6,18 @@ The main window behaves like a normal window and never pins above other apps. Th
 
 __(Works on other games too!)__
 
+## NOTE
+
+This app isn't signed yet
+
+The app is expected to be flagged by Windows Smartscreen
+
+Nonetheless the app is safe. __(checked from virustotal.com)__
+
+https://www.virustotal.com/gui/file/d3708d564082a48dcf4a48ec64cefe0c5ba5c512f3cb3a1a420556be20154c75?nocache=1
+
+__The app will be signed soon on the later patches__
+
 ## Features
 
 - **Get-off countdown** - set a clock time, add 30 minutes or an hour, or clear it.
@@ -69,11 +81,6 @@ The result is `dist\ValorantMatchTimer.exe`.
 ## Legacy version
 
 The original Python version is kept in [`legacy/`](legacy/) for reference and is no longer the primary application.
-
-## NOTE
-
-This app isn't signed yet, but the app is safe. (checked from virustotal.com)
-https://www.virustotal.com/gui/file/d3708d564082a48dcf4a48ec64cefe0c5ba5c512f3cb3a1a420556be20154c75?nocache=1
 
 ## License
 
