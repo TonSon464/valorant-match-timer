@@ -5,9 +5,6 @@ namespace ValorantMatchTimer.Core;
 
 public sealed class AppSettings
 {
-    [JsonPropertyName("always_on_top")]
-    public bool AlwaysOnTop { get; set; }
-
     [JsonPropertyName("shutdown_after_match")]
     public bool ShutdownAfterMatch { get; set; } = true;
 
@@ -25,9 +22,6 @@ public sealed class AppSettings
 
     [JsonPropertyName("cutoff_iso")]
     public string? CutoffIso { get; set; }
-
-    [JsonPropertyName("geometry")]
-    public string? Geometry { get; set; }
 
     [JsonPropertyName("log_path")]
     public string? LogPath { get; set; }

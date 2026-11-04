@@ -665,7 +665,6 @@ public partial class MainWindow : Window
             },
             onShutdown: ExecuteShutdown);
 
-        warning.Owner = this;
         _warning = warning;
         warning.Closed += (_, _) =>
         {

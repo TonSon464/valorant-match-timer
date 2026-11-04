@@ -34,6 +34,7 @@ public partial class OverlayWindow : Window
             Reposition();
         };
         Loaded += (_, _) => Reposition();
+        SizeChanged += (_, _) => Reposition();
     }
 
     public void ApplySettings()

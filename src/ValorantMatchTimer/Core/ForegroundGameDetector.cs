@@ -18,7 +18,23 @@ public static class ForegroundGameDetector
         "RuntimeBroker",
         "dwm",
         "Taskmgr",
-        "ValorantMatchTimer"
+        "ValorantMatchTimer",
+        "chrome",
+        "msedge",
+        "firefox",
+        "brave",
+        "opera",
+        "vivaldi",
+        "vlc",
+        "wmplayer",
+        "mpc-hc64",
+        "mpc-be64",
+        "potplayermini64",
+        "Spotify",
+        "Discord",
+        "Telegram",
+        "Code",
+        "devenv"
     };
 
     public static bool IsFullscreenGame(out string processName)
