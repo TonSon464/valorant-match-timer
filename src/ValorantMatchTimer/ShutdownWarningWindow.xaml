@@ -1,0 +1,71 @@
+<Window x:Class="ValorantMatchTimer.ShutdownWarningWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Shutdown warning"
+        Width="470"
+        Height="310"
+        Background="{StaticResource BgBrush}"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Topmost="True"
+        FontFamily="Segoe UI">
+    <Border Margin="6"
+            Background="{StaticResource CardBrush}"
+            BorderBrush="{StaticResource AccentBrush}"
+            BorderThickness="2"
+            CornerRadius="12"
+            Padding="22,18">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="TitleText"
+                       Grid.Row="0"
+                       Text="GET-OFF TIME REACHED"
+                       FontSize="13"
+                       FontWeight="Bold"
+                       Foreground="{StaticResource AccentBrush}" />
+            <TextBlock x:Name="DetailText"
+                       Grid.Row="1"
+                       Text=""
+                       FontSize="11"
+                       Foreground="{StaticResource TextBrush}"
+                       TextWrapping="Wrap"
+                       Margin="0,7,0,10" />
+            <TextBlock Grid.Row="2"
+                       Text="PC SHUTS DOWN IN"
+                       Style="{StaticResource LabelText}" />
+            <TextBlock x:Name="CountdownText"
+                       Grid.Row="3"
+                       Text="2:00"
+                       Style="{StaticResource TimerText}"
+                       FontSize="44"
+                       Foreground="{StaticResource AccentBrush}"
+                       Margin="0,-2,0,8" />
+
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Content="Cancel shutdown"
+                        Style="{StaticResource AccentButton}"
+                        FontSize="13"
+                        Padding="14,10"
+                        Click="Cancel_Click" />
+                <Button Grid.Column="1"
+                        Content="Shut down now"
+                        Style="{StaticResource BaseButton}"
+                        FontSize="11"
+                        Margin="8,0,0,0"
+                        Click="Shutdown_Click" />
+            </Grid>
+        </Grid>
+    </Border>
+</Window>

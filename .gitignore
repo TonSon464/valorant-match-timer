@@ -1,0 +1,18 @@
+# Build output
+bin/
+obj/
+dist/
+.vs/
+*.user
+*.suo
+
+# Python legacy
+__pycache__/
+*.py[cod]
+.venv/
+
+# Logs and local files
+*.log
+error.log
+Thumbs.db
+.DS_Store
