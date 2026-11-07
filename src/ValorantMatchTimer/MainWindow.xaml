@@ -207,9 +207,6 @@
                    Text="Ready." />
 
         <Grid Grid.Row="4">
-            <TextBlock Text="Main window never pins above other apps."
-                       Style="{StaticResource MutedText}"
-                       VerticalAlignment="Center" />
             <Button Content="Shutdown..."
                     Style="{StaticResource BaseButton}"
                     HorizontalAlignment="Right"
