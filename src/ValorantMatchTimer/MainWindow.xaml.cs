@@ -592,9 +592,8 @@ public partial class MainWindow : Window
         var difference = evt.DurationSeconds - expected;
         var sign = difference >= 0 ? "+" : "-";
         var mapName = string.IsNullOrWhiteSpace(evt.Map) ? "map" : evt.Map;
-        var detail = $"{label} on {mapName}\nPlayed {DurationParser.FormatDuration(evt.DurationSeconds)} · predicted {DurationParser.FormatDuration(expected)} ({sign}{DurationParser.FormatDuration(Math.Abs(difference))})";
 
-        Log($"Match ended: {label} on {mapName} — actual {DurationParser.FormatDuration(evt.DurationSeconds)}, predicted {DurationParser.FormatDuration(expected)}.");
+        Log($"Match ended: {label} on {mapName} — actual {DurationParser.FormatDuration(evt.DurationSeconds)}, predicted {DurationParser.FormatDuration(expected)} ({sign}{DurationParser.FormatDuration(Math.Abs(difference))}).");
         if (recorded)
         {
             Log("Saved to prediction history.");
@@ -613,10 +612,6 @@ public partial class MainWindow : Window
             _pendingShutdownReason = null;
             Log("Get-off time already reached. Shutdown warning next.");
             BeginShutdownWarning("Get-off time reached", reason, _settings.WarningMinutes * 60);
-        }
-        else if (_settings.ShutdownAfterMatch)
-        {
-            BeginShutdownWarning($"{label} ended", detail, _settings.WarningMinutes * 60);
         }
     }
 

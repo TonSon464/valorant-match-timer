@@ -293,7 +293,7 @@
                         <TextBlock Text="Shutdown" Style="{StaticResource SectionTitle}" />
 
                         <CheckBox x:Name="ShutdownAfterMatchCheck"
-                                  Content="Ask to shut down when a match ends"
+                                  Content="Ask to shut down when a manual timer ends"
                                   Style="{StaticResource Check}"
                                   Checked="ShutdownToggle_Changed"
                                   Unchecked="ShutdownToggle_Changed" />
