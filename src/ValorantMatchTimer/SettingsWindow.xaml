@@ -58,7 +58,7 @@
                              Checked="Nav_Checked" />
 
                 <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,18,0,10" />
-                <TextBlock Text="Valorant Match Timer 2.0"
+                <TextBlock Text="Valorant Match Timer 2.0.1"
                            Style="{StaticResource MutedText}" />
                 <TextBlock Text="MIT licensed · open source"
                            Style="{StaticResource MutedText}"

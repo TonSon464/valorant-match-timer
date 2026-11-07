@@ -9,6 +9,8 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using ValorantMatchTimer.Core;
 using ValorantMatchTimer.UI;
+using Drawing = System.Drawing;
+using Forms = System.Windows.Forms;
 
 namespace ValorantMatchTimer;
 
@@ -47,8 +49,11 @@ public partial class MainWindow : Window
     private string? _pendingShutdownReason;
     private string _selectedMode = "competitive";
     private bool _closing;
+    private bool _exiting;
+    private bool _trayHintShown;
     private bool _overlayIsGame;
     private DateTime _lastAutoCheck = DateTime.MinValue;
+    private Forms.NotifyIcon? _trayIcon;
 
     public ObservableCollection<string> ActivityLog { get; } = new();
     public AppSettings Settings => _settings;
@@ -76,6 +81,7 @@ public partial class MainWindow : Window
         _tickTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
         _tickTimer.Tick += (_, _) => Tick();
 
+        InitializeTrayIcon();
         Loaded += OnLoaded;
         Closing += OnClosing;
     }
@@ -699,6 +705,7 @@ public partial class MainWindow : Window
         timer.Tick += (_, _) =>
         {
             timer.Stop();
+            _exiting = true;
             Application.Current.Shutdown();
         };
         timer.Start();
@@ -843,6 +850,92 @@ public partial class MainWindow : Window
         _overlay?.Show();
     }
 
+    private void InitializeTrayIcon()
+    {
+        var menu = new Forms.ContextMenuStrip();
+        menu.Items.Add("Open timer", null, (_, _) => ShowFromTray());
+        menu.Items.Add("Settings", null, (_, _) =>
+        {
+            ShowFromTray();
+            OpenSettings();
+        });
+        menu.Items.Add(new Forms.ToolStripSeparator());
+        menu.Items.Add("Exit", null, (_, _) => ExitFromTray());
+
+        _trayIcon = new Forms.NotifyIcon
+        {
+            Text = "Valorant Match Timer",
+            Visible = true,
+            ContextMenuStrip = menu,
+            Icon = LoadTrayIcon()
+        };
+        _trayIcon.DoubleClick += (_, _) => ShowFromTray();
+    }
+
+    private static Drawing.Icon LoadTrayIcon()
+    {
+        try
+        {
+            var path = Environment.ProcessPath;
+            if (!string.IsNullOrWhiteSpace(path))
+            {
+                var icon = Drawing.Icon.ExtractAssociatedIcon(path);
+                if (icon is not null)
+                {
+                    return icon;
+                }
+            }
+        }
+        catch
+        {
+            // Fall back to the default application icon.
+        }
+
+        return (Drawing.Icon)Drawing.SystemIcons.Application.Clone();
+    }
+
+    private void HideToTray()
+    {
+        Hide();
+
+        if (_trayHintShown)
+        {
+            return;
+        }
+
+        _trayHintShown = true;
+        try
+        {
+            _trayIcon?.ShowBalloonTip(
+                2500,
+                "Still running",
+                "Valorant Match Timer keeps running here. Right-click the tray icon to exit.",
+                Forms.ToolTipIcon.Info);
+        }
+        catch
+        {
+            // Balloon tips are optional.
+        }
+    }
+
+    private void ShowFromTray()
+    {
+        Show();
+        if (WindowState == WindowState.Minimized)
+        {
+            WindowState = WindowState.Normal;
+        }
+        Activate();
+    }
+
+    private void ExitFromTray() => ExitApplication();
+
+    public void ExitApplication()
+    {
+        _exiting = true;
+        Application.Current.Shutdown();
+    }
+
     private void Settings_Click(object sender, RoutedEventArgs e) => OpenSettings();
 
     private void SetCutoff_Click(object sender, RoutedEventArgs e) => SetCutoff();
@@ -879,6 +972,13 @@ public partial class MainWindow : Window
 
     private void OnClosing(object? sender, CancelEventArgs e)
     {
+        if (!_exiting)
+        {
+            e.Cancel = true;
+            HideToTray();
+            return;
+        }
+
         _closing = true;
         _tickTimer.Stop();
         SaveSettings();
@@ -886,5 +986,7 @@ public partial class MainWindow : Window
         _overlay?.Close();
         _settingsWindow?.Close();
         _warning?.Close();
+        _trayIcon?.Dispose();
+        _trayIcon = null;
     }
 }

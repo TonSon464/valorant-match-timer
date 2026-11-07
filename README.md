@@ -10,7 +10,7 @@ __(Works on other games too!)__
 > **This app isn't signed yet**
 >
 > The app is expected to be flagged by Windows SmartScreen.
-> Nonetheless the app is safe ([checked on VirusTotal](https://www.virustotal.com/gui/file/d3708d564082a48dcf4a48ec64cefe0c5ba5c512f3cb3a1a420556be20154c75?nocache=1)).
+> The executable is built from the source in this repository.
 >
 > *The app will be signed soon on later patches.*
 
@@ -23,6 +23,7 @@ __(Works on other games too!)__
 - **Manual timers** - Competitive, Unrated, Swiftplay, Spike Rush, Deathmatch, Team Deathmatch, Custom, and a custom duration field.
 - **Optional overlay** - shows the get-off time, match info, predicted end, and clock; can be locked click-through and only shown while a fullscreen game is focused.
 - **Shutdown warning** - a cancellable countdown window instead of an instant shutdown. If your cutoff arrives during a match, the app waits for the match and overtime to finish.
+- **Tray background mode** - closing the main window keeps the timer running in the system tray; use Exit from the tray menu to quit.
 - **Start with Windows** - optional; managed through the current user's Run key.
 - **Local only** - settings, statistics, and history stay on your PC.
 
@@ -58,7 +59,7 @@ If the log is not detected automatically, set the path in **Settings > General**
 - Match duration history: `%APPDATA%\ValorantMatchTimer\history.json`
 - Startup entry: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run\ValorantMatchTimer`
 
-Closing the main window exits the app.
+Closing the main window hides it to the system tray. Right-click the tray icon and choose Exit to quit.
 
 ## Build from source
 

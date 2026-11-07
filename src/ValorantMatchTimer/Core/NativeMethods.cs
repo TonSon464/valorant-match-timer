@@ -86,6 +86,30 @@ public static class NativeMethods
         int cy,
         uint uFlags);
 
+    [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+    private static extern IntPtr FindWindow(string? lpClassName, string lpWindowName);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+    [DllImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+    public static bool ShowExistingWindow(string title)
+    {
+        var hwnd = FindWindow(null, title);
+        if (hwnd == IntPtr.Zero)
+        {
+            return false;
+        }
+
+        ShowWindow(hwnd, 9);
+        SetForegroundWindow(hwnd);
+        return true;
+    }
+
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 

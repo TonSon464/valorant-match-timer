@@ -23,11 +23,14 @@ public partial class App : Application
         _mutex = new Mutex(true, @"Local\ValorantMatchTimer", out var createdNew);
         if (!createdNew)
         {
-            MessageBox.Show(
-                "Valorant Match Timer is already running.",
-                "Valorant Match Timer",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+            if (!NativeMethods.ShowExistingWindow("Valorant Match Timer"))
+            {
+                MessageBox.Show(
+                    "Valorant Match Timer is already running.",
+                    "Valorant Match Timer",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
             Shutdown();
             return;
         }
@@ -60,7 +63,7 @@ public partial class App : Application
             timer.Tick += (_, _) =>
             {
                 timer.Stop();
-                Shutdown();
+                window.ExitApplication();
             };
             timer.Start();
         }
@@ -88,7 +91,13 @@ public partial class App : Application
             MatchStartEvent? open = null;
             var count = 0;
 
-            foreach (var line in File.ReadLines(logPath, Encoding.UTF8))
+            using var stream = new FileStream(
+                logPath,
+                FileMode.Open,
+                FileAccess.Read,
+                FileShare.ReadWrite | FileShare.Delete);
+            using var reader = new StreamReader(stream, Encoding.UTF8);
+            while (reader.ReadLine() is { } line)
             {
                 foreach (var evt in parser.Feed(line))
                 {
