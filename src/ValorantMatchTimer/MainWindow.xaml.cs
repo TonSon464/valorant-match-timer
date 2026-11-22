@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using ValorantMatchTimer.Core;
 using ValorantMatchTimer.UI;
@@ -52,6 +53,8 @@ public partial class MainWindow : Window
     private bool _exiting;
     private bool _trayHintShown;
     private bool _overlayIsGame;
+    private bool _pickerPm;
+    private bool _pickerSuppress;
     private DateTime _lastAutoCheck = DateTime.MinValue;
     private Forms.NotifyIcon? _trayIcon;
 
@@ -76,6 +79,7 @@ public partial class MainWindow : Window
         _selectedMode = GameModes.IsKnown(_settings.SelectedMode) ? _settings.SelectedMode : "competitive";
 
         BuildModeButtons();
+        InitializeTimePicker();
         CustomDurationBox.Text = _settings.CustomDuration;
 
         _tickTimer = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
@@ -88,6 +92,7 @@ public partial class MainWindow : Window
 
     private void OnLoaded(object sender, RoutedEventArgs e)
     {
+        AnimateCards();
         LoadCutoff();
         SelectMode(_selectedMode);
         RestartWatcher();
@@ -111,6 +116,34 @@ public partial class MainWindow : Window
         _tickTimer.Start();
         Log("Ready. Set a get-off time or start a manual timer.");
         Log("Valorant auto-detect watches ShooterGame.log; the get-off timer works over any game.");
+    }
+
+    private void AnimateCards()
+    {
+        AnimateCard(GetOffCard, 0);
+        AnimateCard(MatchCard, 90);
+    }
+
+    private static void AnimateCard(Border card, int delayMs)
+    {
+        var transform = new TranslateTransform(0, 10);
+        card.RenderTransformOrigin = new Point(0.5, 0.5);
+        card.RenderTransform = transform;
+        var ease = new CubicEase { EasingMode = EasingMode.EaseOut };
+
+        var slide = new DoubleAnimation(10, 0, TimeSpan.FromMilliseconds(300))
+        {
+            BeginTime = TimeSpan.FromMilliseconds(delayMs),
+            EasingFunction = ease
+        };
+        transform.BeginAnimation(TranslateTransform.YProperty, slide);
+
+        var fade = new DoubleAnimation(0.4, 1, TimeSpan.FromMilliseconds(280))
+        {
+            BeginTime = TimeSpan.FromMilliseconds(delayMs),
+            EasingFunction = ease
+        };
+        card.BeginAnimation(OpacityProperty, fade);
     }
 
     private void BuildModeButtons()
@@ -284,29 +317,73 @@ public partial class MainWindow : Window
         Log("Prediction history cleared.");
     }
 
-    private void SetCutoff()
+    private void InitializeTimePicker()
     {
-        var target = DurationParser.ParseClock(ClockBox.Text);
-        if (!target.HasValue)
+        for (var hour = 1; hour <= 12; hour++)
         {
-            Log("Get-off time is invalid. Use 24-hour HH:MM, e.g. 23:30.");
-            Beep();
-            return;
+            HourList.Items.Add(hour.ToString(CultureInfo.InvariantCulture));
         }
 
-        _cutoff = target.Value;
-        _cutoffFired = false;
-        ClockBox.Text = target.Value.ToString("HH:mm");
-        Log($"Get-off time set for {target.Value:HH:mm}.");
-        SaveSettings();
-        RenderGetOff(DateTimeOffset.Now);
+        for (var minute = 0; minute < 60; minute++)
+        {
+            MinuteList.Items.Add(minute.ToString("00", CultureInfo.InvariantCulture));
+        }
+
+        SetPickerTime(DateTimeOffset.Now.AddHours(1));
+    }
+
+    private void SetPickerTime(DateTimeOffset time)
+    {
+        _pickerSuppress = true;
+        var hour12 = time.Hour % 12;
+        if (hour12 == 0)
+        {
+            hour12 = 12;
+        }
+
+        HourList.SelectedItem = hour12.ToString(CultureInfo.InvariantCulture);
+        MinuteList.SelectedItem = time.Minute.ToString("00", CultureInfo.InvariantCulture);
+        _pickerPm = time.Hour >= 12;
+        _pickerSuppress = false;
+        UpdatePickerDisplay();
+        UpdatePickerAmPmButtons();
+    }
+
+    private void UpdatePickerDisplay()
+    {
+        var hour = SelectedNumber(HourList) ?? 11;
+        var minute = SelectedNumber(MinuteList) ?? 0;
+        ClockButton.Content = $"{hour}:{minute:00} {(_pickerPm ? "PM" : "AM")}";
+    }
+
+    private void UpdatePickerAmPmButtons()
+    {
+        AmButton.Background = _pickerPm ? _card2Brush : _accentBrush;
+        PmButton.Background = _pickerPm ? _accentBrush : _card2Brush;
+    }
+
+    private static int? SelectedNumber(ListBox list) =>
+        list.SelectedItem is string text
+        && int.TryParse(text, NumberStyles.None, CultureInfo.InvariantCulture, out var value)
+            ? value
+            : null;
+
+    private static string FormatClock12(DateTimeOffset time)
+    {
+        var hour = time.Hour % 12;
+        if (hour == 0)
+        {
+            hour = 12;
+        }
+
+        return $"{hour}:{time.Minute:00} {(time.Hour >= 12 ? "PM" : "AM")}";
     }
 
     private void QuickCutoff(int minutes)
     {
         _cutoff = DateTimeOffset.Now.AddMinutes(minutes);
         _cutoffFired = false;
-        ClockBox.Text = _cutoff.Value.ToString("HH:mm");
+        ClockButton.Content = FormatClock12(_cutoff.Value);
         Log($"Get-off time set for {_cutoff.Value:HH:mm} (+{minutes}m).");
         SaveSettings();
         RenderGetOff(DateTimeOffset.Now);
@@ -317,9 +394,10 @@ public partial class MainWindow : Window
         _cutoff = null;
         _cutoffFired = false;
         _pendingShutdownReason = null;
+        ClockButton.Content = FormatClock12(DateTimeOffset.Now.AddHours(1));
         GetOffText.Text = "—:—:—";
         GetOffText.Foreground = _textBrush;
-        GetOffHint.Text = "Set the clock time you need to stop.";
+        GetOffHint.Text = "Click the time to change it.";
         Log("Get-off time cleared.");
         SaveSettings();
     }
@@ -339,7 +417,7 @@ public partial class MainWindow : Window
             && target > DateTimeOffset.Now.AddSeconds(-60))
         {
             _cutoff = target;
-            ClockBox.Text = target.ToString("HH:mm");
+            ClockButton.Content = FormatClock12(target);
         }
         else
         {
@@ -387,7 +465,7 @@ public partial class MainWindow : Window
         {
             GetOffText.Text = "—:—:—";
             GetOffText.Foreground = _textBrush;
-            GetOffHint.Text = "Set the clock time you need to stop.";
+            GetOffHint.Text = "Click the time to change it.";
             return;
         }
 
@@ -404,7 +482,7 @@ public partial class MainWindow : Window
 
         GetOffText.Text = DurationParser.FormatHms(remaining);
         GetOffText.Foreground = _textBrush;
-        GetOffHint.Text = $"Get off at {_cutoff.Value:HH:mm}. Works over any game.";
+        GetOffHint.Text = $"Get off at {_cutoff.Value:HH:mm}. Click the time to change it.";
     }
 
     private void RenderMatch(DateTimeOffset now)
@@ -493,7 +571,9 @@ public partial class MainWindow : Window
         if ((DateTime.UtcNow - _lastAutoCheck).TotalMilliseconds >= 450)
         {
             _lastAutoCheck = DateTime.UtcNow;
-            _overlayIsGame = ForegroundGameDetector.IsFullscreenGame(out _);
+            _overlayIsGame = ForegroundGameDetector.IsFullscreenGame(
+                out _,
+                _settings.OverlayIncludeBorderless);
         }
 
         if (_overlayIsGame)
@@ -938,21 +1018,83 @@ public partial class MainWindow : Window
 
     private void Settings_Click(object sender, RoutedEventArgs e) => OpenSettings();
 
-    private void SetCutoff_Click(object sender, RoutedEventArgs e) => SetCutoff();
+    private void ClockButton_Click(object sender, RoutedEventArgs e)
+    {
+        SetPickerTime(_cutoff ?? DateTimeOffset.Now.AddHours(1));
+        TimePopup.IsOpen = true;
+    }
+
+    private void TimeWheel_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (_pickerSuppress)
+        {
+            return;
+        }
+
+        UpdatePickerDisplay();
+    }
+
+    private void WheelList_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+    {
+        if (sender is not ListBox list || list.Items.Count == 0)
+        {
+            return;
+        }
+
+        e.Handled = true;
+        var step = e.Delta > 0 ? -1 : 1;
+        var index = Math.Clamp(list.SelectedIndex + step, 0, list.Items.Count - 1);
+        list.SelectedIndex = index;
+        list.ScrollIntoView(list.SelectedItem);
+        UpdatePickerDisplay();
+    }
+
+    private void AmPm_Click(object sender, RoutedEventArgs e)
+    {
+        _pickerPm = string.Equals((sender as Button)?.Content as string, "PM", StringComparison.Ordinal);
+        UpdatePickerDisplay();
+        UpdatePickerAmPmButtons();
+    }
+
+    private void PickerCancel_Click(object sender, RoutedEventArgs e) => TimePopup.IsOpen = false;
+
+    private void TimePopup_Closed(object sender, EventArgs e)
+    {
+        ClockButton.Content = _cutoff.HasValue ? FormatClock12(_cutoff.Value) : "11:00 PM";
+    }
+
+    private void PickerDone_Click(object sender, RoutedEventArgs e)
+    {
+        var hour = SelectedNumber(HourList);
+        var minute = SelectedNumber(MinuteList);
+        if (hour is null || minute is null)
+        {
+            Beep();
+            return;
+        }
+
+        var hour24 = (hour.Value % 12) + (_pickerPm ? 12 : 0);
+        var target = DurationParser.ParseClock($"{hour24:00}:{minute:00}");
+        if (target is null)
+        {
+            Beep();
+            return;
+        }
+
+        _cutoff = target.Value;
+        _cutoffFired = false;
+        ClockButton.Content = FormatClock12(target.Value);
+        TimePopup.IsOpen = false;
+        Log($"Get-off time set for {target.Value:HH:mm}.");
+        SaveSettings();
+        RenderGetOff(DateTimeOffset.Now);
+    }
 
     private void Quick30_Click(object sender, RoutedEventArgs e) => QuickCutoff(30);
 
     private void Quick60_Click(object sender, RoutedEventArgs e) => QuickCutoff(60);
 
     private void ClearCutoff_Click(object sender, RoutedEventArgs e) => ClearCutoff();
-
-    private void ClockBox_KeyDown(object sender, KeyEventArgs e)
-    {
-        if (e.Key == Key.Enter)
-        {
-            SetCutoff();
-        }
-    }
 
     private void CustomDurationBox_KeyDown(object sender, KeyEventArgs e)
     {

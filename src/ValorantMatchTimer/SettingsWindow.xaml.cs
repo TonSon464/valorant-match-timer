@@ -48,6 +48,7 @@ public partial class SettingsWindow : Window
 
         OverlayEnabledCheck.IsChecked = _settings.ShowOverlay;
         OverlayAutoGameCheck.IsChecked = _settings.OverlayAutoGame;
+        OverlayBorderlessCheck.IsChecked = _settings.OverlayIncludeBorderless;
         OverlayClickThroughCheck.IsChecked = _settings.OverlayClickThrough;
         OpacitySlider.Value = _settings.OverlayOpacity;
         ScaleSlider.Value = _settings.OverlayScale;
@@ -178,6 +179,7 @@ public partial class SettingsWindow : Window
 
         _settings.ShowOverlay = OverlayEnabledCheck.IsChecked == true;
         _settings.OverlayAutoGame = OverlayAutoGameCheck.IsChecked == true;
+        _settings.OverlayIncludeBorderless = OverlayBorderlessCheck.IsChecked == true;
         _settings.OverlayClickThrough = OverlayClickThroughCheck.IsChecked == true;
         _settings.OverlayShowTime = ShowTimeCheck.IsChecked == true;
         _settings.OverlayShowMatch = ShowMatchCheck.IsChecked == true;

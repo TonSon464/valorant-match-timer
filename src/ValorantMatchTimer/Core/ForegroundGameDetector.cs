@@ -37,7 +37,7 @@ public static class ForegroundGameDetector
         "devenv"
     };
 
-    public static bool IsFullscreenGame(out string processName)
+    public static bool IsFullscreenGame(out string processName, bool includeBorderless = false)
     {
         processName = "";
         var hwnd = NativeMethods.GetForegroundWindow();
@@ -92,9 +92,24 @@ public static class ForegroundGameDetector
 
         const int tolerance = 2;
         var screen = info.rcMonitor;
-        return rect.Left <= screen.Left + tolerance
+        var coversMonitor = rect.Left <= screen.Left + tolerance
             && rect.Top <= screen.Top + tolerance
             && rect.Right >= screen.Right - tolerance
             && rect.Bottom >= screen.Bottom - tolerance;
+        if (!coversMonitor)
+        {
+            return false;
+        }
+
+        if (includeBorderless)
+        {
+            return true;
+        }
+
+        var style = NativeMethods.GetWindowLongPtr(hwnd, NativeMethods.GWL_STYLE).ToInt64();
+        var exStyle = NativeMethods.GetWindowLongPtr(hwnd, NativeMethods.GWL_EXSTYLE).ToInt64();
+        var hasChrome = (style & (NativeMethods.WS_CAPTION | NativeMethods.WS_THICKFRAME)) != 0;
+        var isTopmost = (exStyle & NativeMethods.WS_EX_TOPMOST) != 0;
+        return !hasChrome && isTopmost;
     }
 }

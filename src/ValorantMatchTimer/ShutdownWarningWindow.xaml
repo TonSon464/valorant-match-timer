@@ -9,7 +9,42 @@
         ResizeMode="NoResize"
         Topmost="True"
         FontFamily="Segoe UI">
-    <Border Margin="6"
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="Window.Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Storyboard.TargetName="WarningRoot"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="0"
+                                     To="1"
+                                     Duration="0:0:0.22" />
+                    <DoubleAnimation Storyboard.TargetName="CountdownText"
+                                     Storyboard.TargetProperty="Opacity"
+                                     From="1"
+                                     To="0.6"
+                                     Duration="0:0:0.7"
+                                     AutoReverse="True"
+                                     RepeatBehavior="Forever" />
+                    <DoubleAnimation Storyboard.TargetName="CountdownScale"
+                                     Storyboard.TargetProperty="ScaleX"
+                                     From="1"
+                                     To="1.035"
+                                     Duration="0:0:0.7"
+                                     AutoReverse="True"
+                                     RepeatBehavior="Forever" />
+                    <DoubleAnimation Storyboard.TargetName="CountdownScale"
+                                     Storyboard.TargetProperty="ScaleY"
+                                     From="1"
+                                     To="1.035"
+                                     Duration="0:0:0.7"
+                                     AutoReverse="True"
+                                     RepeatBehavior="Forever" />
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </Window.Triggers>
+    <Border x:Name="WarningRoot"
+            Margin="6"
             Background="{StaticResource CardBrush}"
             BorderBrush="{StaticResource AccentBrush}"
             BorderThickness="2"
@@ -47,7 +82,12 @@
                        Style="{StaticResource TimerText}"
                        FontSize="44"
                        Foreground="{StaticResource AccentBrush}"
-                       Margin="0,-2,0,8" />
+                       Margin="0,-2,0,8"
+                       RenderTransformOrigin="0.5,0.5">
+                <TextBlock.RenderTransform>
+                    <ScaleTransform x:Name="CountdownScale" ScaleX="1" ScaleY="1" />
+                </TextBlock.RenderTransform>
+            </TextBlock>
 
             <Grid Grid.Row="4">
                 <Grid.ColumnDefinitions>

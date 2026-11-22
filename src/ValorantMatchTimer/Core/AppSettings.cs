@@ -38,6 +38,9 @@ public sealed class AppSettings
     [JsonPropertyName("overlay_auto_game")]
     public bool OverlayAutoGame { get; set; } = true;
 
+    [JsonPropertyName("overlay_include_borderless")]
+    public bool OverlayIncludeBorderless { get; set; }
+
     [JsonPropertyName("overlay_opacity")]
     public double OverlayOpacity { get; set; } = 0.92;
 

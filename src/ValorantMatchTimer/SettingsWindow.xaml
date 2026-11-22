@@ -58,7 +58,7 @@
                              Checked="Nav_Checked" />
 
                 <Border Height="1" Background="{StaticResource BorderBrush}" Margin="0,18,0,10" />
-                <TextBlock Text="Valorant Match Timer 2.0.1"
+                <TextBlock Text="Valorant Match Timer 2.1.0"
                            Style="{StaticResource MutedText}" />
                 <TextBlock Text="MIT licensed · open source"
                            Style="{StaticResource MutedText}"
@@ -131,6 +131,13 @@
                                   Unchecked="OverlayToggle_Changed" />
                         <CheckBox x:Name="OverlayAutoGameCheck"
                                   Content="Show only while a fullscreen game is focused"
+                                  Style="{StaticResource Check}"
+                                  Margin="0,9,0,0"
+                                  Checked="OverlayToggle_Changed"
+                                  Unchecked="OverlayToggle_Changed" />
+                        <CheckBox x:Name="OverlayBorderlessCheck"
+                                  Content="Also show over borderless windowed games"
+                                  ToolTip="Off by default: the overlay follows true fullscreen games only."
                                   Style="{StaticResource Check}"
                                   Margin="0,9,0,0"
                                   Checked="OverlayToggle_Changed"

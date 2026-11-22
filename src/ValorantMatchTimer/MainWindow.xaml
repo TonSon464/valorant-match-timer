@@ -66,7 +66,7 @@
             </StackPanel>
         </Grid>
 
-        <Border Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+        <Border x:Name="GetOffCard" Grid.Row="1" Style="{StaticResource CardBorder}" Margin="0,0,0,10">
             <StackPanel>
                 <TextBlock Text="TIME LEFT BEFORE YOU GET OFF PC" Style="{StaticResource LabelText}" />
                 <TextBlock x:Name="GetOffText"
@@ -75,18 +75,18 @@
                            FontSize="40"
                            Margin="0,2,0,0" />
                 <TextBlock x:Name="GetOffHint"
-                           Text="Set the clock time you need to stop."
+                           Text="Click the time to pick it with the wheel."
                            Style="{StaticResource MutedText}"
                            Margin="0,0,0,10" />
 
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="78" />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="92" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
@@ -94,24 +94,18 @@
                                Style="{StaticResource MutedText}"
                                VerticalAlignment="Center"
                                Margin="0,0,8,0" />
-                    <TextBox x:Name="ClockBox"
-                             Grid.Column="1"
-                             Style="{StaticResource InputBox}"
-                             Text="23:00"
-                             TextAlignment="Center"
-                             FontWeight="SemiBold"
-                             KeyDown="ClockBox_KeyDown" />
+                    <Button x:Name="ClockButton"
+                            Grid.Column="1"
+                            Style="{StaticResource TimeButton}"
+                            Content="11:00 PM"
+                            ToolTip="Click to choose a time"
+                            Click="ClockButton_Click" />
                     <Button Grid.Column="2"
-                            Content="Set"
-                            Style="{StaticResource AccentButton}"
-                            Margin="6,0,0,0"
-                            Click="SetCutoff_Click" />
-                    <Button Grid.Column="3"
                             Content="+30m"
                             Style="{StaticResource BaseButton}"
                             Margin="6,0,0,0"
                             Click="Quick30_Click" />
-                    <Button Grid.Column="4"
+                    <Button Grid.Column="3"
                             Content="+1h"
                             Style="{StaticResource BaseButton}"
                             Margin="6,0,0,0"
@@ -122,11 +116,80 @@
                             Margin="6,0,0,0"
                             HorizontalAlignment="Right"
                             Click="ClearCutoff_Click" />
+
+                    <Popup x:Name="TimePopup"
+                           Grid.ColumnSpan="6"
+                           Placement="Bottom"
+                           PlacementTarget="{Binding ElementName=ClockButton}"
+                           StaysOpen="False"
+                           AllowsTransparency="True"
+                           PopupAnimation="Slide"
+                           HorizontalOffset="-10"
+                           VerticalOffset="6"
+                           Closed="TimePopup_Closed">
+                        <Border Background="{StaticResource Card2Brush}"
+                                BorderBrush="{StaticResource AccentBrush}"
+                                BorderThickness="1"
+                                CornerRadius="10"
+                                Padding="12">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="18" ShadowDepth="6" Color="Black" Opacity="0.55" />
+                            </Border.Effect>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <ListBox x:Name="HourList"
+                                             Grid.Column="0"
+                                             Style="{StaticResource WheelList}"
+                                             SelectionChanged="TimeWheel_SelectionChanged"
+                                             PreviewMouseWheel="WheelList_PreviewMouseWheel" />
+                                    <ListBox x:Name="MinuteList"
+                                             Grid.Column="1"
+                                             Style="{StaticResource WheelList}"
+                                             Margin="8,0,0,0"
+                                             SelectionChanged="TimeWheel_SelectionChanged"
+                                             PreviewMouseWheel="WheelList_PreviewMouseWheel" />
+                                    <StackPanel Grid.Column="2" Margin="8,0,0,0">
+                                        <Button x:Name="AmButton"
+                                                Content="AM"
+                                                Style="{StaticResource BaseButton}"
+                                                Width="46"
+                                                Padding="6"
+                                                Click="AmPm_Click" />
+                                        <Button x:Name="PmButton"
+                                                Content="PM"
+                                                Style="{StaticResource BaseButton}"
+                                                Width="46"
+                                                Padding="6"
+                                                Margin="0,6,0,0"
+                                                Click="AmPm_Click" />
+                                    </StackPanel>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal"
+                                            HorizontalAlignment="Right"
+                                            Margin="0,10,0,0">
+                                    <Button Content="Cancel"
+                                            Style="{StaticResource BaseButton}"
+                                            Padding="9,5"
+                                            Click="PickerCancel_Click" />
+                                    <Button Content="Done"
+                                            Style="{StaticResource AccentButton}"
+                                            Padding="14,5"
+                                            Margin="6,0,0,0"
+                                            Click="PickerDone_Click" />
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
+                    </Popup>
                 </Grid>
             </StackPanel>
         </Border>
 
-        <Border Grid.Row="2" Style="{StaticResource CardBorder}" Margin="0,0,0,10">
+        <Border x:Name="MatchCard" Grid.Row="2" Style="{StaticResource CardBorder}" Margin="0,0,0,10">
             <StackPanel>
                 <Grid>
                     <TextBlock Text="MATCH" Style="{StaticResource LabelText}" />

@@ -12,7 +12,7 @@
     <ApplicationIcon>Assets\ValorantMatchTimer.ico</ApplicationIcon>
     <AssemblyName>ValorantMatchTimer</AssemblyName>
     <RootNamespace>ValorantMatchTimer</RootNamespace>
-    <Version>2.0.1</Version>
+    <Version>2.1.0</Version>
     <Authors>Tonson</Authors>
     <Company>Tonson</Company>
     <Title>Valorant Match Timer</Title>

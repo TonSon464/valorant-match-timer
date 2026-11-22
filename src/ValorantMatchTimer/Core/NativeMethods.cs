@@ -4,7 +4,11 @@ namespace ValorantMatchTimer.Core;
 
 public static class NativeMethods
 {
+    public const int GWL_STYLE = -16;
     public const int GWL_EXSTYLE = -20;
+    public const long WS_CAPTION = 0x00C00000L;
+    public const long WS_THICKFRAME = 0x00040000L;
+    public const long WS_EX_TOPMOST = 0x00000008L;
     public const int WS_EX_TRANSPARENT = 0x00000020;
     public const int WS_EX_TOOLWINDOW = 0x00000080;
     public const int WS_EX_LAYERED = 0x00080000;
@@ -113,6 +117,25 @@ public static class NativeMethods
     [DllImport("dwmapi.dll")]
     private static extern int DwmSetWindowAttribute(IntPtr hwnd, int attribute, ref int value, int size);
 
+    public static readonly IntPtr HWND_TOPMOST = new(-1);
+
+    public static void BringToFront(IntPtr hwnd)
+    {
+        if (hwnd == IntPtr.Zero)
+        {
+            return;
+        }
+
+        SetWindowPos(
+            hwnd,
+            HWND_TOPMOST,
+            0,
+            0,
+            0,
+            0,
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
+    }
+
     public static void ApplyOverlayStyles(IntPtr hwnd, bool clickThrough)
     {
         var style = (long)GetWindowLongPtr(hwnd, GWL_EXSTYLE);
@@ -130,12 +153,12 @@ public static class NativeMethods
         SetWindowLongPtr(hwnd, GWL_EXSTYLE, new IntPtr(style));
         SetWindowPos(
             hwnd,
-            IntPtr.Zero,
+            HWND_TOPMOST,
             0,
             0,
             0,
             0,
-            SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE | SWP_FRAMECHANGED);
+            SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE | SWP_FRAMECHANGED);
     }
 
     public static void EnableDarkTitleBar(IntPtr hwnd)

@@ -17,11 +17,11 @@ __(Works on other games too!)__
 
 ## Features
 
-- **Get-off countdown** - set a clock time, add 30 minutes or an hour, or clear it.
+- **Get-off countdown** - click the time and scroll the hour/minute wheels like Google, or use +30m / +1h.
 - **Automatic match detection** - reads `ShooterGame.log` to detect match start and end, with no game integration or network access.
 - **Match history** - learns typical match lengths and predicts when the current match will end.
 - **Manual timers** - Competitive, Unrated, Swiftplay, Spike Rush, Deathmatch, Team Deathmatch, Custom, and a custom duration field.
-- **Optional overlay** - shows the get-off time, match info, predicted end, and clock; can be locked click-through and only shown while a fullscreen game is focused.
+- **Optional overlay** - shows the get-off time, match info, predicted end, and clock; follows true fullscreen games by default, with an optional borderless-game toggle.
 - **Shutdown warning** - a cancellable countdown window instead of an instant shutdown. If your cutoff arrives during a match, the app waits for the match and overtime to finish.
 - **Tray background mode** - closing the main window keeps the timer running in the system tray; use Exit from the tray menu to quit.
 - **Start with Windows** - optional; managed through the current user's Run key.

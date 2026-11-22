@@ -19,11 +19,15 @@
             Background="#10131A"
             BorderBrush="#FF4655"
             BorderThickness="2"
-            CornerRadius="10"
-            Padding="14">
+        CornerRadius="10"
+        Padding="14"
+        RenderTransformOrigin="0.5,0.5">
         <Border.LayoutTransform>
             <ScaleTransform x:Name="RootScale" ScaleX="1" ScaleY="1" />
         </Border.LayoutTransform>
+        <Border.RenderTransform>
+            <ScaleTransform x:Name="OverlayAnimScale" ScaleX="1" ScaleY="1" />
+        </Border.RenderTransform>
         <StackPanel>
             <Grid>
                 <TextBlock x:Name="TimeLabel"

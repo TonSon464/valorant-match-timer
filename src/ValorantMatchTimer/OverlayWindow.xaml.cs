@@ -2,6 +2,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using ValorantMatchTimer.Core;
 
 namespace ValorantMatchTimer;
@@ -15,6 +16,7 @@ public partial class OverlayWindow : Window
     private readonly Brush _warnBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0xB0, 0x20));
     private Brush _accentBrush = new SolidColorBrush(Color.FromRgb(0xFF, 0x46, 0x55));
     private IntPtr _hwnd;
+    private DateTime _lastTopmost = DateTime.MinValue;
 
     public OverlayWindow(MainWindow owner, AppSettings settings)
     {
@@ -35,6 +37,31 @@ public partial class OverlayWindow : Window
         };
         Loaded += (_, _) => Reposition();
         SizeChanged += (_, _) => Reposition();
+        IsVisibleChanged += OnIsVisibleChanged;
+    }
+
+    private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+    {
+        if (!IsVisible)
+        {
+            return;
+        }
+
+        var target = Math.Clamp(_settings.OverlayOpacity, 0.2, 1.0);
+        var fade = new DoubleAnimation(0, target, TimeSpan.FromMilliseconds(220))
+        {
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+        };
+        fade.Completed += (_, _) => BeginAnimation(OpacityProperty, null);
+        BeginAnimation(OpacityProperty, fade);
+
+        var scaleX = new DoubleAnimation(0.94, 1, TimeSpan.FromMilliseconds(260))
+        {
+            EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut }
+        };
+        var scaleY = (DoubleAnimation)scaleX.Clone();
+        OverlayAnimScale.BeginAnimation(ScaleTransform.ScaleXProperty, scaleX);
+        OverlayAnimScale.BeginAnimation(ScaleTransform.ScaleYProperty, scaleY);
     }
 
     public void ApplySettings()
@@ -59,6 +86,13 @@ public partial class OverlayWindow : Window
 
     public void Refresh(OverlaySnapshot snapshot)
     {
+        if (IsVisible && _hwnd != IntPtr.Zero
+            && (DateTime.UtcNow - _lastTopmost).TotalMilliseconds >= 900)
+        {
+            _lastTopmost = DateTime.UtcNow;
+            NativeMethods.BringToFront(_hwnd);
+        }
+
         ClockText.Text = snapshot.Now.ToString("HH:mm");
 
         if (snapshot.Cutoff.HasValue)
